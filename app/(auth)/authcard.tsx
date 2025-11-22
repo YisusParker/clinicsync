@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useFormState } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
@@ -16,8 +16,29 @@ export default function AuthCard({ loginAction, registerAction }: AuthCardProps)
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [showRegisterConfirm, setShowRegisterConfirm] = useState(false);
   
-  const [loginState, loginFormAction] = useFormState(loginAction, null);
-  const [registerState, registerFormAction] = useFormState(registerAction, null);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [registerError, setRegisterError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handleLogin = async (formData: FormData) => {
+    setLoginError(null);
+    startTransition(async () => {
+      const result = await loginAction(null, formData);
+      if (result?.error) {
+        setLoginError(result.error);
+      }
+    });
+  };
+
+  const handleRegister = async (formData: FormData) => {
+    setRegisterError(null);
+    startTransition(async () => {
+      const result = await registerAction(null, formData);
+      if (result?.error) {
+        setRegisterError(result.error);
+      }
+    });
+  };
 
   return (
     <motion.div
@@ -59,15 +80,15 @@ export default function AuthCard({ loginAction, registerAction }: AuthCardProps)
             className="space-y-4"
           >
             <h2 className="text-sm font-medium text-slate-700">Iniciar sesión</h2>
-            <form action={loginFormAction} className="space-y-4">
-              {loginState?.error && (
+            <form action={handleLogin} className="space-y-4">
+              {loginError && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm"
                 >
                   <AlertCircle size={16} />
-                  <span>{loginState.error}</span>
+                  <span>{loginError}</span>
                 </motion.div>
               )}
               <input
@@ -92,13 +113,15 @@ export default function AuthCard({ loginAction, registerAction }: AuthCardProps)
                 </button>
               </div>
 
-              <button type="submit" className="btn-primary">Entrar</button>
+              <button type="submit" className="btn-primary" disabled={isPending}>
+                {isPending ? "Entrando..." : "Entrar"}
+              </button>
 
               <button
                 type="button"
                 onClick={() => {
                   setIsRegistering(true);
-                  // Reset login state when switching
+                  setLoginError(null);
                 }}
                 className="btn-secondary"
               >
@@ -117,15 +140,15 @@ export default function AuthCard({ loginAction, registerAction }: AuthCardProps)
           >
             <h2 className="text-sm font-medium text-slate-700">Crear nuevo doctor</h2>
 
-            <form action={registerFormAction} className="space-y-4">
-              {registerState?.error && (
+            <form action={handleRegister} className="space-y-4">
+              {registerError && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm"
                 >
                   <AlertCircle size={16} />
-                  <span>{registerState.error}</span>
+                  <span>{registerError}</span>
                 </motion.div>
               )}
               <input
@@ -177,13 +200,15 @@ export default function AuthCard({ loginAction, registerAction }: AuthCardProps)
                 </button>
               </div>
 
-              <button type="submit" className="btn-primary">Registrar y entrar</button>
+              <button type="submit" className="btn-primary" disabled={isPending}>
+                {isPending ? "Registrando..." : "Registrar y entrar"}
+              </button>
 
               <button
                 type="button"
                 onClick={() => {
                   setIsRegistering(false);
-                  // Reset register state when switching
+                  setRegisterError(null);
                 }}
                 className="btn-secondary"
               >
