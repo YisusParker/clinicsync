@@ -52,9 +52,11 @@ export async function registerDoctor(formData: FormData) {
     });
 
     const cookieStore = await cookies();
+    // In production (Vercel), always use secure cookies
+    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
     cookieStore.set(SESSION_COOKIE, String(doctor.id), {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isProduction,
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
@@ -95,9 +97,11 @@ export async function loginDoctor(formData: FormData) {
     }
 
     const cookieStore = await cookies();
+    // In production (Vercel), always use secure cookies
+    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
     cookieStore.set(SESSION_COOKIE, String(doctor.id), {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isProduction,
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
@@ -119,9 +123,11 @@ export async function loginDoctor(formData: FormData) {
 // ---------------------------------------------
 export async function logoutDoctor() {
   const cookieStore = await cookies();
+  // In production (Vercel), always use secure cookies
+  const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
   cookieStore.set(SESSION_COOKIE, "", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProduction,
     sameSite: "lax",
     path: "/",
     maxAge: 0,
