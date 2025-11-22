@@ -28,7 +28,7 @@ async function readCSV(filePath: string): Promise<CSVRow[]> {
     relax_quotes: true,
     quote: '"',
     escape: '"',
-  });
+  }) as CSVRow[];
   return records;
 }
 
