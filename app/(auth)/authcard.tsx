@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useActionState } from "react";
+import { useState, useFormState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
@@ -16,8 +16,8 @@ export default function AuthCard({ loginAction, registerAction }: AuthCardProps)
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [showRegisterConfirm, setShowRegisterConfirm] = useState(false);
   
-  const [loginState, loginFormAction] = useActionState(loginAction, null);
-  const [registerState, registerFormAction] = useActionState(registerAction, null);
+  const [loginState, loginFormAction] = useFormState(loginAction, null);
+  const [registerState, registerFormAction] = useFormState(registerAction, null);
 
   return (
     <motion.div
