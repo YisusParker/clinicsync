@@ -1,7 +1,8 @@
-import { getPatient, updatePatient } from "@/lib/patients";
+import { getPatient } from "@/lib/patients";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { createUpdatePatientAction } from "./actions";
 
 export default async function EditPatientPage({
   params,
@@ -15,10 +16,7 @@ export default async function EditPatientPage({
     notFound();
   }
 
-  // Wrapper to match Next.js form action type signature
-  async function updatePatientAction(formData: FormData): Promise<void> {
-    await updatePatient(Number(id), formData);
-  }
+  const updatePatientAction = createUpdatePatientAction(Number(id));
 
   return (
     <div className="space-y-6">

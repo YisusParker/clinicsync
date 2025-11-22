@@ -1,12 +1,7 @@
-import { createConsultation } from "@/lib/consultations";
 import { getPatients } from "@/lib/patients";
 import { ArrowLeft, Save, Calendar } from "lucide-react";
 import Link from "next/link";
-
-// Wrapper to match Next.js form action type signature
-async function createConsultationAction(formData: FormData): Promise<void> {
-  await createConsultation(formData);
-}
+import { createConsultationAction } from "./actions";
 
 export default async function NewConsultationPage({
   searchParams,

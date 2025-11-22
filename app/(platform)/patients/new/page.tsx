@@ -1,6 +1,6 @@
-import { createPatient } from "@/lib/patients";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
+import { createPatientAction } from "./actions";
 
 export default function NewPatientPage() {
   return (
@@ -24,9 +24,7 @@ export default function NewPatientPage() {
       </div>
 
       {/* FORM */}
-      <form action={async (formData) => {
-        await createPatient(formData);
-      }} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+      <form action={createPatientAction} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Name */}
           <div className="md:col-span-2">
