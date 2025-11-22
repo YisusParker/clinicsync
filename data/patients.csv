@@ -1,0 +1,14 @@
+name,email,doctorId,bloodType,allergies,medications,emergencyPhone
+Juan Pérez,juan.perez@email.com,1,O+,Penicilina,Metformina 500mg 2x día,+52 555 123 4567
+María López,maria.lopez@email.com,1,A-,Ninguna conocida,Omeprazol 20mg 1x día,+52 555 234 5678
+Carlos Sánchez,carlos.sanchez@email.com,1,B+,Polen,Losartan 50mg 1x día,+52 555 345 6789
+Ana García,ana.garcia@email.com,2,AB-,Lactosa,Levotiroxina 75mcg 1x día,+52 555 456 7890
+Roberto Torres,roberto.torres@email.com,2,O-,Ninguna conocida,Atorvastatina 20mg 1x día,+52 555 567 8901
+Laura Jiménez,laura.jimenez@email.com,2,A+,Mariscos,Paracetamol 500mg según necesidad,+52 555 678 9012
+Pedro Hernández,pedro.hernandez@email.com,3,B-,Ninguna conocida,Amoxicilina 500mg 3x día (tratamiento actual),+52 555 789 0123
+Carmen Ruiz,carmen.ruiz@email.com,3,O+,Aspirina,Ibuprofeno 400mg según necesidad,+52 555 890 1234
+Diego Morales,diego.morales@email.com,3,AB+,Ninguna conocida,Ninguno,+52 555 901 2345
+Sofía Castro,sofia.castro@email.com,4,A-,Polen y ácaros,Antihistamínico según necesidad,+52 555 012 3456
+Miguel Vargas,miguel.vargas@email.com,4,B+,Ninguna conocida,Metformina 850mg 2x día,+52 555 123 4567
+Patricia Silva,patricia.silva@email.com,4,O-,Látex,Anticonceptivos orales,+52 555 234 5678
+

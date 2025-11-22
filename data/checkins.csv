@@ -1,0 +1,12 @@
+planId,patientId,createdAt,symptomScore,notes
+1,1,2024-01-22T08:00:00Z,3,Glucosa en ayunas: 135 mg/dL. Paciente refiere seguir dieta correctamente.
+1,1,2024-01-29T08:00:00Z,2,Glucosa en ayunas: 120 mg/dL. Mejoría notable. Sin efectos secundarios.
+4,4,2024-02-05T09:00:00Z,4,Paciente refiere cansancio. Esperando resultados de TSH.
+4,4,2024-02-12T09:00:00Z,3,Resultados TSH recibidos. Valores mejorando. Paciente se siente mejor.
+5,5,2024-02-08T10:00:00Z,2,Paciente sin síntomas. Siguiendo tratamiento correctamente.
+7,7,2024-02-03T14:00:00Z,5,Fiebre persistente. Tos con flema. Se recomienda volver a consulta.
+7,7,2024-02-05T14:00:00Z,3,Mejoría significativa. Fiebre desapareció. Tos disminuyendo.
+10,10,2024-02-15T07:00:00Z,4,Síntomas de alergia aumentaron. Estornudos frecuentes.
+10,10,2024-02-18T07:00:00Z,2,Mejoría con antihistamínico. Síntomas controlados.
+11,11,2024-02-20T08:00:00Z,3,Glucosa: 125 mg/dL. Paciente adaptándose a nueva dosis.
+

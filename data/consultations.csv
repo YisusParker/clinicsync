@@ -1,0 +1,14 @@
+date,summary,doctorId,patientId
+2024-01-15T10:30:00Z,Paciente presenta síntomas de diabetes tipo 2. Se realizó examen de glucosa en ayunas: 145 mg/dL. Se prescribe Metformina 500mg 2 veces al día. Control en 3 meses. Recomendaciones dietéticas proporcionadas.,1,1
+2024-01-18T14:00:00Z,Consulta de seguimiento por gastritis. Paciente refiere mejoría con Omeprazol. Se mantiene tratamiento. Recomendaciones sobre alimentación y horarios de comida.,1,2
+2024-01-20T09:15:00Z,Control de hipertensión arterial. TA: 130/85 mmHg. Se ajusta dosis de Losartan. Paciente debe monitorear presión en casa. Próxima cita en 1 mes.,1,3
+2024-01-22T11:00:00Z,Consulta inicial. Paciente con hipotiroidismo. Se inicia tratamiento con Levotiroxina 75mcg. Exámenes de TSH y T4 solicitados. Control en 6 semanas.,2,4
+2024-01-25T15:30:00Z,Control de colesterol. Paciente con hipercolesterolemia. Se prescribe Atorvastatina 20mg. Explicación sobre dieta baja en grasas. Control en 3 meses.,2,5
+2024-01-28T10:00:00Z,"Consulta por dolor de cabeza recurrente. Se prescribe Paracetamol según necesidad. Se recomienda mantener registro de episodios. Si persiste, realizar estudios adicionales.",2,6
+2024-02-01T13:00:00Z,Infección respiratoria. Paciente con tos y fiebre. Se prescribe Amoxicilina 500mg 3 veces al día por 7 días. Reposo y abundante líquidos. Control si no mejora en 48 horas.,3,7
+2024-02-05T09:30:00Z,Consulta por dolor articular. Paciente refiere dolor en rodillas. Se prescribe Ibuprofeno según necesidad. Se recomienda fisioterapia. Control en 2 semanas.,3,8
+2024-02-08T14:45:00Z,Consulta de rutina. Paciente en buen estado general. Examen físico normal. Se recomienda continuar con estilo de vida saludable. Próxima cita en 6 meses.,3,9
+2024-02-12T11:15:00Z,Control de alergias estacionales. Paciente con rinitis alérgica. Se prescribe antihistamínico. Recomendaciones sobre evitar alérgenos. Control si síntomas persisten.,4,10
+2024-02-15T16:00:00Z,Seguimiento de diabetes. Glucosa en ayunas: 128 mg/dL. Se ajusta dosis de Metformina a 850mg 2 veces al día. Hemoglobina glicosilada solicitada. Control en 2 meses.,4,11
+2024-02-18T10:30:00Z,Consulta ginecológica de rutina. Paciente con anticonceptivos orales. Todo normal. Se recomienda continuar con método actual. Próxima cita en 1 año.,4,12
+

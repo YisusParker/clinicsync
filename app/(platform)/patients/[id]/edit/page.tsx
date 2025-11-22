@@ -2,7 +2,7 @@ import { getPatient } from "@/lib/patients";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { updatePatientAction as updatePatientActionServer } from "./actions";
+import { updatePatientAction } from "./actions";
 
 export default async function EditPatientPage({
   params,
@@ -15,11 +15,6 @@ export default async function EditPatientPage({
 
   if (!patient) {
     notFound();
-  }
-
-  // Create action wrapper that includes the patient id
-  async function updatePatientAction(formData: FormData): Promise<void> {
-    await updatePatientActionServer(patientId, formData);
   }
 
   return (
@@ -44,6 +39,7 @@ export default async function EditPatientPage({
 
       {/* FORM */}
       <form action={updatePatientAction} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+        <input type="hidden" name="id" value={patient.id} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Name */}
           <div className="md:col-span-2">
