@@ -15,7 +15,10 @@ export default async function EditPatientPage({
     notFound();
   }
 
-  const updatePatientWithId = updatePatient.bind(null, Number(id));
+  // Wrapper to match Next.js form action type signature
+  async function updatePatientAction(formData: FormData): Promise<void> {
+    await updatePatient(Number(id), formData);
+  }
 
   return (
     <div className="space-y-6">
@@ -38,7 +41,7 @@ export default async function EditPatientPage({
       </div>
 
       {/* FORM */}
-      <form action={updatePatientWithId} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+      <form action={updatePatientAction} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Name */}
           <div className="md:col-span-2">

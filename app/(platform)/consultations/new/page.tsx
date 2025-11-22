@@ -3,6 +3,11 @@ import { getPatients } from "@/lib/patients";
 import { ArrowLeft, Save, Calendar } from "lucide-react";
 import Link from "next/link";
 
+// Wrapper to match Next.js form action type signature
+async function createConsultationAction(formData: FormData): Promise<void> {
+  await createConsultation(formData);
+}
+
 export default async function NewConsultationPage({
   searchParams,
 }: {
@@ -32,7 +37,7 @@ export default async function NewConsultationPage({
       </div>
 
       {/* FORM */}
-      <form action={createConsultation} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+      <form action={createConsultationAction} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
         <div className="space-y-6">
           {/* Patient Selection */}
           <div>
