@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Doctor {
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String         @unique
+  password      String
+  consultations Consultation[]
+  patients      Patient[]
+}
+
+model Patient {
+  id             Int            @id @default(autoincrement())
+  name           String
+  email          String?
+  doctorId       Int
+  bloodType      String?
+  allergies      String?
+  medications    String?
+  emergencyPhone String?
+  checkIns       CheckIn[]
+  consultations  Consultation[]
+  nfcTokens      NfcToken[]
+  doctor         Doctor         @relation(fields: [doctorId], references: [id])
+}
+
+model Consultation {
+  id           Int           @id @default(autoincrement())
+  date         DateTime      @default(now())
+  summary      String
+  doctorId     Int
+  patientId    Int
+  doctor       Doctor        @relation(fields: [doctorId], references: [id])
+  patient      Patient       @relation(fields: [patientId], references: [id])
+  FollowUpPlan FollowUpPlan?
+}
+
+model CheckIn {
+  id           Int          @id @default(autoincrement())
+  planId       Int
+  patientId    Int
+  createdAt    DateTime     @default(now())
+  symptomScore Int
+  notes        String?
+  alert        Alert?
+  patient      Patient      @relation(fields: [patientId], references: [id])
+  FollowUpPlan FollowUpPlan @relation(fields: [planId], references: [id])
+}
+
+model Alert {
+  id        Int      @id @default(autoincrement())
+  checkInId Int      @unique
+  createdAt DateTime @default(now())
+  resolved  Boolean  @default(false)
+  checkIn   CheckIn  @relation(fields: [checkInId], references: [id])
+}
+
+model NfcToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  patientId Int
+  createdAt DateTime @default(now())
+  active    Boolean  @default(true)
+  patient   Patient  @relation(fields: [patientId], references: [id])
+}
+
+model FollowUpPlan {
+  id             Int          @id @default(autoincrement())
+  consultationId Int          @unique
+  active         Boolean      @default(true)
+  CheckIn        CheckIn[]
+  Consultation   Consultation @relation(fields: [consultationId], references: [id])
+}
