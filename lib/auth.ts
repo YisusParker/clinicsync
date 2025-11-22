@@ -86,12 +86,12 @@ export async function loginDoctor(formData: FormData) {
     const doctor = await prisma.doctor.findUnique({ where: { email } });
 
     if (!doctor) {
-      return { error: "Credenciales inválidas." };
+      return { error: "No existe una cuenta registrada con este correo electrónico." };
     }
 
     const valid = await bcrypt.compare(password, doctor.password);
     if (!valid) {
-      return { error: "Credenciales inválidas." };
+      return { error: "Contraseña incorrecta." };
     }
 
     const cookieStore = await cookies();

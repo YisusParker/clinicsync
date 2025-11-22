@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useActionState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, AlertCircle } from "lucide-react";
 
 interface AuthCardProps {
-  loginAction: (formData: FormData) => Promise<void>;
-  registerAction: (formData: FormData) => Promise<void>;
+  loginAction: (prevState: { error?: string } | null, formData: FormData) => Promise<{ error?: string }>;
+  registerAction: (prevState: { error?: string } | null, formData: FormData) => Promise<{ error?: string }>;
 }
 
 export default function AuthCard({ loginAction, registerAction }: AuthCardProps) {
@@ -15,6 +15,9 @@ export default function AuthCard({ loginAction, registerAction }: AuthCardProps)
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [showRegisterConfirm, setShowRegisterConfirm] = useState(false);
+  
+  const [loginState, loginFormAction] = useActionState(loginAction, null);
+  const [registerState, registerFormAction] = useActionState(registerAction, null);
 
   return (
     <motion.div
@@ -56,7 +59,17 @@ export default function AuthCard({ loginAction, registerAction }: AuthCardProps)
             className="space-y-4"
           >
             <h2 className="text-sm font-medium text-slate-700">Iniciar sesión</h2>
-            <form action={loginAction} className="space-y-4">
+            <form action={loginFormAction} className="space-y-4">
+              {loginState?.error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm"
+                >
+                  <AlertCircle size={16} />
+                  <span>{loginState.error}</span>
+                </motion.div>
+              )}
               <input
                 name="email"
                 type="email"
@@ -83,7 +96,10 @@ export default function AuthCard({ loginAction, registerAction }: AuthCardProps)
 
               <button
                 type="button"
-                onClick={() => setIsRegistering(true)}
+                onClick={() => {
+                  setIsRegistering(true);
+                  // Reset login state when switching
+                }}
                 className="btn-secondary"
               >
                 Crear cuenta nueva
@@ -101,7 +117,17 @@ export default function AuthCard({ loginAction, registerAction }: AuthCardProps)
           >
             <h2 className="text-sm font-medium text-slate-700">Crear nuevo doctor</h2>
 
-            <form action={registerAction} className="space-y-4">
+            <form action={registerFormAction} className="space-y-4">
+              {registerState?.error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm"
+                >
+                  <AlertCircle size={16} />
+                  <span>{registerState.error}</span>
+                </motion.div>
+              )}
               <input
                 name="name"
                 placeholder="Dr. Juan Pérez"
@@ -155,7 +181,10 @@ export default function AuthCard({ loginAction, registerAction }: AuthCardProps)
 
               <button
                 type="button"
-                onClick={() => setIsRegistering(false)}
+                onClick={() => {
+                  setIsRegistering(false);
+                  // Reset register state when switching
+                }}
                 className="btn-secondary"
               >
                 Ya tengo cuenta
