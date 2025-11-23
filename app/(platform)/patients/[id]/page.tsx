@@ -1,5 +1,5 @@
 import { getPatient } from "@/lib/patients";
-import { ArrowLeft, Edit, Mail, Phone, Droplet, Calendar, FileText } from "lucide-react";
+import { ArrowLeft, Edit, Mail, Phone, Droplet, Calendar, FileText, Download } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -183,6 +183,14 @@ export default async function PatientDetailPage({
               >
                 Nueva consulta
               </Link>
+              <a
+                href={`/api/patients/${patient.id}/export`}
+                download
+                className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-[#0A6CBD] hover:bg-[#095a9d] text-white rounded-xl text-sm font-medium transition"
+              >
+                <Download size={16} />
+                Descargar archivo completo
+              </a>
             </div>
           </div>
         </div>

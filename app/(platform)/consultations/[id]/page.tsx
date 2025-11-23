@@ -2,6 +2,7 @@ import { getConsultation } from "@/lib/consultations";
 import { ArrowLeft, Calendar, User, FileText } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import DeleteConsultationButton from "./DeleteButton";
 
 export default async function ConsultationDetailPage({
   params,
@@ -133,6 +134,13 @@ export default async function ConsultationDetailPage({
               Ver perfil del paciente
             </Link>
           )}
+
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <h3 className="text-sm font-semibold text-slate-800 mb-4">
+              Acciones
+            </h3>
+            <DeleteConsultationButton consultationId={consultation.id} />
+          </div>
         </div>
       </div>
     </div>

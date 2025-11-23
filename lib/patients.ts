@@ -209,3 +209,46 @@ export async function deletePatient(id: number) {
   }
 }
 
+// ---------------------------------------------
+// GET PATIENT FULL DATA FOR EXPORT
+// ---------------------------------------------
+export async function getPatientFullData(id: number) {
+  const doctor = await getCurrentDoctor();
+  if (!doctor) {
+    redirect("/");
+    return null;
+  }
+
+  const patient = await prisma.patient.findFirst({
+    where: {
+      id,
+      doctorId: doctor.id,
+    },
+    include: {
+      consultations: {
+        orderBy: { date: "asc" },
+        include: {
+          FollowUpPlan: {
+            include: {
+              CheckIn: {
+                orderBy: { createdAt: "asc" },
+                include: {
+                  alert: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      doctor: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  return patient;
+}
+
