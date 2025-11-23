@@ -69,7 +69,16 @@ export async function registerDoctor(formData: FormData) {
       throw err;
     }
     console.error("REGISTER ERROR:", err);
-    return { error: "Error interno del servidor." };
+    
+    // Detectar errores de conexión a la base de datos
+    if (err?.code === "P1001" || err?.message?.includes("Can't reach database server")) {
+      console.error("Database connection error - DATABASE_URL may not be configured correctly in Vercel");
+      return { 
+        error: "Error de conexión a la base de datos. Por favor, verifica la configuración del servidor." 
+      };
+    }
+    
+    return { error: "Error interno del servidor. Por favor, intenta de nuevo." };
   }
 }
 
@@ -114,7 +123,16 @@ export async function loginDoctor(formData: FormData) {
       throw err;
     }
     console.error("LOGIN ERROR:", err);
-    return { error: "Error interno del servidor." };
+    
+    // Detectar errores de conexión a la base de datos
+    if (err?.code === "P1001" || err?.message?.includes("Can't reach database server")) {
+      console.error("Database connection error - DATABASE_URL may not be configured correctly in Vercel");
+      return { 
+        error: "Error de conexión a la base de datos. Por favor, verifica la configuración del servidor." 
+      };
+    }
+    
+    return { error: "Error interno del servidor. Por favor, intenta de nuevo." };
   }
 }
 

@@ -65,12 +65,22 @@ Después de configurar `DATABASE_URL`:
 
 **Solución**: Asegúrate de que `DATABASE_URL` esté configurada en Vercel y que esté disponible para el entorno correcto (Production/Preview/Development).
 
-### Error: "Connection refused" o errores de conexión
+### Error: "Connection refused" o "Can't reach database server"
 
 **Solución**: 
 - Verifica que la URL de la base de datos sea correcta
 - Asegúrate de que tu base de datos permita conexiones desde Vercel (verifica firewall/IP allowlist)
 - Si usas un servicio como Railway o Neon, verifica que la base de datos esté activa
+
+### Error Específico con Supabase: "Can't reach database server at pooler.supabase.com"
+
+**Solución**: Si usas Supabase, este es un problema común. Ver la guía detallada en [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md)
+
+**Resumen rápido**:
+1. Usa la URL de **Connection Pooling** (Transaction mode) de Supabase
+2. Asegúrate de que la URL incluya `?pgbouncer=true&sslmode=require`
+3. Configura `DATABASE_URL` en Vercel con esta URL completa
+4. Haz un redeploy después de configurar la variable
 
 ### Las migraciones no se aplican
 

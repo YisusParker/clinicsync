@@ -70,6 +70,26 @@ prisma migrate deploy && next build
 postgresql://usuario:contraseña@host:puerto/database?schema=public
 ```
 
+#### Error Específico con Supabase: "Can't reach database server at pooler.supabase.com"
+
+**Problema**: Si ves este error específico con Supabase:
+```
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:5432`
+```
+
+**Solución**: Este es un problema común con Supabase. Ver la guía detallada en [SUPABASE_SETUP.md](SUPABASE_SETUP.md)
+
+**Resumen rápido**:
+1. ✅ Usa la URL de **Connection Pooling** (Transaction mode) de Supabase
+2. ✅ Asegúrate de que la URL incluya `?pgbouncer=true&sslmode=require`
+3. ✅ Configura `DATABASE_URL` en Vercel con esta URL completa
+4. ✅ Haz un **redeploy** después de configurar la variable
+
+**URL correcta para Supabase en Vercel**:
+```
+postgresql://postgres.[project-ref]:[password]@aws-1-us-east-1.pooler.supabase.com:5432/postgres?pgbouncer=true&sslmode=require
+```
+
 ### 5. Build Falla en Producción
 
 **Problema**: El build falla en Vercel pero funciona en local.
