@@ -114,6 +114,71 @@ postgresql://postgres.[project-ref]:[password]@aws-1-us-east-1.pooler.supabase.c
 }
 ```
 
+### 6.1. Error: "prepared statement 's0' already exists"
+
+**Problema**: Error al intentar registrar o iniciar sesión:
+```
+Error [PrismaClientUnknownRequestError]: 
+ConnectorError(ConnectorError { 
+  kind: QueryError(PostgresError { 
+    code: "42P05", 
+    message: "prepared statement \"s0\" already exists"
+  })
+})
+```
+
+**Causa**: Este error ocurre cuando:
+1. Se crean múltiples instancias de PrismaClient (especialmente en producción/serverless)
+2. Se usa connection pooling (PgBouncer) sin la configuración correcta
+
+**Solución**:
+
+1. **Verifica que `lib/db.ts` use el patrón singleton correctamente**:
+   ```typescript
+   // lib/db.ts debe tener esto:
+   const globalForPrisma = globalThis as unknown as {
+     prisma?: PrismaClient;
+   };
+   
+   export const prisma =
+     globalForPrisma.prisma ??
+     new PrismaClient({...});
+   
+   // CRÍTICO: Siempre asignar al global (tanto en dev como en producción)
+   if (!globalForPrisma.prisma) {
+     globalForPrisma.prisma = prisma;
+   }
+   ```
+
+2. **Asegúrate de que `DATABASE_URL` incluya `pgbouncer=true`**:
+   ```
+   postgresql://...?pgbouncer=true&sslmode=require
+   ```
+   Este parámetro le dice a Prisma que deshabilite prepared statements, necesario para PgBouncer.
+
+3. **Configura `DIRECT_URL` en el schema de Prisma** (opcional pero recomendado):
+   ```prisma
+   datasource db {
+     provider  = "postgresql"
+     url       = env("DATABASE_URL")  // URL con pgbouncer
+     directUrl = env("DIRECT_URL")    // URL directa para migraciones
+   }
+   ```
+   
+   Luego configura `DIRECT_URL` en Vercel con la URL directa (sin `pgbouncer=true`).
+
+4. **Regenera Prisma Client**:
+   ```bash
+   npx prisma generate
+   ```
+
+5. **Redeploy en Vercel** después de hacer los cambios.
+
+**Nota**: Este error ya está resuelto en el código base actual. Si persiste, verifica que:
+- `lib/db.ts` tenga el patrón singleton correcto
+- `DATABASE_URL` tenga `?pgbouncer=true&sslmode=require`
+- Hayas hecho redeploy después de los cambios
+
 ### 7. Verificar Logs en Producción
 
 **Cómo ver logs en Vercel**:

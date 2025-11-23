@@ -51,9 +51,18 @@ postgresql://postgres.[project-ref]:[password]@aws-1-us-east-1.pooler.supabase.c
 2. Selecciona tu proyecto `clinicsync`
 3. Ve a **Settings** → **Environment Variables**
 4. Busca `DATABASE_URL` o haz clic en **Add New**
-5. Pega la URL completa de Supabase (con `pgbouncer=true&sslmode=require`)
-6. Selecciona **Production**, **Preview**, y **Development**
-7. Haz clic en **Save**
+5. **Name**: `DATABASE_URL`
+6. **Value**: Pega la URL **COMPLETA** de Supabase incluyendo `?pgbouncer=true&sslmode=require` al final
+   
+   **⚠️ IMPORTANTE**: La URL completa debe verse así:
+   ```
+   postgresql://postgres.[project-ref]:[password]@aws-1-us-east-1.pooler.supabase.com:5432/postgres?pgbouncer=true&sslmode=require
+   ```
+   
+   Los parámetros `?pgbouncer=true&sslmode=require` son **obligatorios** y deben estar incluidos en la URL que pegas en Vercel.
+   
+7. Selecciona **Production**, **Preview**, y **Development**
+8. Haz clic en **Save**
 
 ### 4. Verificar Configuración
 
@@ -92,6 +101,35 @@ Si por alguna razón necesitas usar la conexión directa (no recomendado para Ve
 - Verifica que la URL incluya `?pgbouncer=true&sslmode=require`
 - Verifica que `DATABASE_URL` esté configurada para **Production** en Vercel
 - Haz un redeploy después de cambiar la variable
+
+### Error: "prepared statement 's0' already exists"
+
+**Error**:
+```
+Error [PrismaClientUnknownRequestError]: 
+ConnectorError(ConnectorError { 
+  kind: QueryError(PostgresError { 
+    code: "42P05", 
+    message: "prepared statement \"s0\" already exists"
+  })
+})
+```
+
+**Causa**: 
+- Múltiples instancias de PrismaClient se están creando
+- PgBouncer en modo transacción no soporta prepared statements
+- El patrón singleton de Prisma no está funcionando correctamente
+
+**Solución**:
+1. ✅ Verifica que `DATABASE_URL` incluya `?pgbouncer=true&sslmode=require`
+   - El parámetro `pgbouncer=true` le dice a Prisma que deshabilite prepared statements
+2. ✅ Verifica que `lib/db.ts` use el patrón singleton correctamente
+   - Debe asignar al global tanto en desarrollo como en producción
+   - Ver sección 6.1 en [TROUBLESHOOTING.md](TROUBLESHOOTING.md) para detalles
+3. ✅ Regenera Prisma Client: `npx prisma generate`
+4. ✅ Haz redeploy en Vercel
+
+**Nota**: Este error ya está resuelto en el código base actual. Si persiste, verifica la configuración.
 
 ### Error: "Connection pool timeout"
 

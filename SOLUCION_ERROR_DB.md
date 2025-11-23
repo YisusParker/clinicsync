@@ -1,11 +1,42 @@
-# 🔧 Solución Rápida: Error de Conexión a Base de Datos
+# 🔧 Solución Rápida: Errores de Base de Datos
 
-## Problema
+## Problema 1: Error de Conexión General
+
 Estás viendo "Error interno del servidor" al intentar:
 - ✅ Registrar un nuevo doctor
 - ✅ Iniciar sesión con una cuenta existente
 
 **Causa**: La variable `DATABASE_URL` no está configurada correctamente en Vercel.
+
+---
+
+## Problema 2: Error "prepared statement 's0' already exists"
+
+**Error específico**:
+```
+Error [PrismaClientUnknownRequestError]: 
+ConnectorError(ConnectorError { 
+  kind: QueryError(PostgresError { 
+    code: "42P05", 
+    message: "prepared statement \"s0\" already exists"
+  })
+})
+```
+
+**Causa**: 
+- Múltiples instancias de PrismaClient se están creando
+- Connection pooling (PgBouncer) sin configuración correcta
+
+**Solución Rápida**:
+1. ✅ Verifica que `DATABASE_URL` incluya `?pgbouncer=true&sslmode=require`
+2. ✅ Regenera Prisma Client: `npx prisma generate`
+3. ✅ Haz redeploy en Vercel
+
+**Nota**: Este error ya está resuelto en el código. Si persiste, verifica la configuración de `DATABASE_URL`.
+
+---
+
+## Solución para Problema 1: Error de Conexión General
 
 ## Solución Paso a Paso
 
@@ -37,7 +68,15 @@ postgresql://postgres.xxxxx:password@aws-1-us-east-1.pooler.supabase.com:5432/po
 3. Ve a **Settings** → **Environment Variables**
 4. Busca `DATABASE_URL` o haz clic en **Add New**
 5. **Name**: `DATABASE_URL`
-6. **Value**: Pega la URL completa (con `?pgbouncer=true&sslmode=require`)
+6. **Value**: Pega la URL **COMPLETA** incluyendo `?pgbouncer=true&sslmode=require` al final
+   
+   **⚠️ IMPORTANTE**: La URL debe verse así (con los parámetros incluidos):
+   ```
+   postgresql://postgres.xxxxx:password@aws-1-us-east-1.pooler.supabase.com:5432/postgres?pgbouncer=true&sslmode=require
+   ```
+   
+   **NO** pegues solo la parte sin los parámetros. Los parámetros `?pgbouncer=true&sslmode=require` son **obligatorios** y deben estar en la URL.
+   
 7. **Environment**: Selecciona **Production**, **Preview**, y **Development**
 8. Haz clic en **Save**
 
@@ -74,10 +113,30 @@ Si funciona localmente, la URL es correcta y solo necesitas configurarla en Verc
 
 Vercel necesita la variable `DATABASE_URL` para conectarse a tu base de datos. Sin esta variable, Prisma no puede establecer la conexión y todos los intentos de consulta fallan.
 
+## Solución Detallada para Problema 2: Prepared Statement Error
+
+Si el error de "prepared statement" persiste después de verificar `DATABASE_URL`:
+
+1. **Verifica el archivo `lib/db.ts`**:
+   - Debe usar el patrón singleton
+   - Debe asignar al global tanto en desarrollo como en producción
+   - Ver sección 6.1 en [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) para más detalles
+
+2. **Configura `DIRECT_URL` (opcional)**:
+   - Útil para migraciones cuando usas connection pooling
+   - Agrega `DIRECT_URL` en Vercel con la URL directa (sin `pgbouncer=true`)
+   - El schema de Prisma ya está configurado para usarlo
+
+3. **Regenera y redeploy**:
+   ```bash
+   npx prisma generate
+   # Luego haz redeploy en Vercel
+   ```
+
 ## Documentación Completa
 
 Para más detalles, consulta:
 - [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md) - Guía completa de Supabase
 - [VERCEL_SETUP.md](VERCEL_SETUP.md) - Configuración general de Vercel
-- [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) - Más soluciones
+- [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) - Más soluciones (incluye sección 6.1 sobre prepared statements)
 

@@ -14,6 +14,8 @@ export const prisma =
         : ["error"],
   });
 
-if (process.env.NODE_ENV !== "production") {
+// Always set global to prevent multiple PrismaClient instances
+// This is critical for both development and production (especially serverless)
+if (!globalForPrisma.prisma) {
   globalForPrisma.prisma = prisma;
 }
