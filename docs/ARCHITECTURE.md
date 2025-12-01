@@ -136,18 +136,28 @@ app/
     ├── dashboard/
     │   └── page.tsx       # Dashboard (server component)
     ├── patients/
-    │   ├── page.tsx       # Patient list
+    │   ├── page.tsx                    # Patient list (server)
+    │   ├── PatientsListClient.tsx      # Patient list (client with search)
+    │   ├── PatientListSearch.tsx       # Search component
     │   ├── new/
-    │   │   └── page.tsx   # Create patient
+    │   │   └── page.tsx                # Create patient
+    │   ├── import/
+    │   │   ├── page.tsx                # Import patient page
+    │   │   └── ImportPatientForm.tsx   # Import form component
     │   └── [id]/
-    │       ├── page.tsx   # Patient detail
+    │       ├── page.tsx                # Patient detail
     │       └── edit/
-    │           └── page.tsx # Edit patient
+    │           └── page.tsx            # Edit patient
     └── consultations/
         ├── new/
-        │   └── page.tsx   # Create consultation
+        │   ├── page.tsx                # New consultation (server)
+        │   ├── NewConsultationClient.tsx  # New consultation (client)
+        │   ├── PatientSearch.tsx       # Smart patient search
+        │   ├── QuickContextPanel.tsx   # Quick context panel ⭐
+        │   ├── search-actions.ts       # Search server actions
+        │   └── context-actions.ts      # Context server actions
         └── [id]/
-            └── page.tsx   # Consultation detail
+            └── page.tsx                # Consultation detail
 ```
 
 ### Lib Directory Structure
@@ -156,8 +166,8 @@ app/
 lib/
 ├── db.ts                  # Prisma client singleton
 ├── auth.ts               # Authentication server actions
-├── patients.ts           # Patient CRUD server actions
-└── consultations.ts      # Consultation CRUD server actions
+├── patients.ts           # Patient CRUD + search + import operations
+└── consultations.ts      # Consultation CRUD operations
 ```
 
 ## Data Flow

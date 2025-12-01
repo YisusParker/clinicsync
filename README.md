@@ -2,6 +2,10 @@
 
 A minimalistic but high-impact medical platform designed for independent doctors and small clinics in Latin America. ClinicSync modernizes healthcare workflows with a polished, trustworthy, and professional system that feels as seamless as modern SaaS while remaining lightweight enough for rapid iteration and future scalability.
 
+## ⭐ ¿Qué hace único a ClinicSync?
+
+**Quick Context Panel** - El único sistema que ofrece **contexto médico completo en segundos** sin cambiar de página. Al seleccionar un paciente, ves automáticamente alergias, medicamentos, tipo de sangre y su historial completo en un panel lateral. Diseñado específicamente para facilitar consultas con pacientes nuevos y existentes.
+
 ## 🎯 Overview
 
 ClinicSync MVP focuses on the essentials that deliver immediate value to doctors:
@@ -88,20 +92,35 @@ clinicsync/
 │   │   ├── patients/        # Patient management
 │   │   │   ├── page.tsx     # Patient list
 │   │   │   ├── new/         # Create patient
+│   │   │   ├── import/      # Import patient from file
 │   │   │   └── [id]/        # Patient detail & edit
 │   │   └── consultations/  # Consultation management
 │   │       ├── new/         # Create consultation
+│   │       │   ├── PatientSearch.tsx       # Smart search component
+│   │       │   └── QuickContextPanel.tsx   # Context panel component
 │   │       └── [id]/        # Consultation detail
+│   ├── api/                 # API routes
+│   │   └── patients/        # Patient export/import endpoints
 │   ├── layout.tsx            # Root layout
 │   └── styles/              # Global styles
 ├── lib/                      # Server actions & utilities
 │   ├── auth.ts              # Authentication functions
-│   ├── patients.ts          # Patient CRUD operations
+│   ├── patients.ts          # Patient CRUD + search + import
 │   ├── consultations.ts    # Consultation CRUD operations
 │   └── db.ts                # Prisma client instance
 ├── prisma/                   # Database schema & migrations
 │   ├── schema.prisma        # Prisma schema
 │   └── migrations/          # Database migrations
+├── docs/                     # Documentation
+│   ├── ARCHITECTURE.md      # System architecture
+│   ├── API.md               # API reference
+│   ├── DATABASE.md          # Database documentation
+│   ├── FEATURES.md          # Features documentation
+│   └── ...                  # Other documentation files
+├── data/                     # Test data (development only)
+│   ├── *.csv                # Sample data files
+│   ├── import.ts            # Import script
+│   └── README.md            # Data import guide
 └── public/                   # Static assets
     └── logo.png             # ClinicSync logo
 ```
@@ -137,18 +156,34 @@ clinicsync/
 
 #### Patient Management
 - [x] Create new patients
-- [x] View patient list with search
+- [x] View patient list (grid view with key information)
+- [x] **Smart Patient Search** - Búsqueda inteligente en tiempo real
+  - Búsqueda por nombre, email, teléfono o tipo de sangre
+  - Autocompletado con preview del historial
+  - Resultados instantáneos mientras escribes
 - [x] View patient details
 - [x] Edit patient information
+- [x] **Import patient from another doctor** - Importación desde archivo médico
+  - Importa pacientes completos desde archivos exportados
+  - Mantiene historial de consultas
+  - Importa toda la información médica (alergias, medicamentos, etc.)
 - [x] Patient medical information:
   - Name, email, emergency phone
   - Blood type
   - Allergies
   - Current medications
 - [x] View patient consultation history
+- [x] Export patient medical file (text format with full history)
 
 #### Consultation Management
 - [x] Create consultations linked to patients
+- [x] **Quick Context Panel** - Panel de contexto médico instantáneo ⭐
+  - Aparece automáticamente al seleccionar un paciente
+  - Muestra alergias, medicamentos, tipo de sangre destacados
+  - Última consulta con días transcurridos
+  - Timeline visual de las últimas 5 consultas
+  - Alertas si no hay consulta en 6+ meses
+  - Accesos rápidos al perfil completo
 - [x] View consultation details
 - [x] Consultation summaries
 - [x] Date/time tracking
@@ -236,8 +271,14 @@ getCurrentDoctor(): Promise<Doctor | null>
 // Get all patients for current doctor
 getPatients(): Promise<Patient[]>
 
+// Search patients (Smart Search)
+searchPatients(query: string): Promise<Patient[]>
+
 // Get single patient by ID
 getPatient(id: number): Promise<Patient | null>
+
+// Get patient quick context (for Quick Context Panel)
+getPatientQuickContext(id: number): Promise<PatientContext | null>
 
 // Create new patient
 createPatient(formData: FormData): Promise<{ error?: string }>
@@ -247,6 +288,12 @@ updatePatient(id: number, formData: FormData): Promise<{ error?: string }>
 
 // Delete patient
 deletePatient(id: number): Promise<{ error?: string }>
+
+// Import patient from medical file
+importPatientFromFile(fileContent: string, consultations: Consultation[]): Promise<{ error?: string; patientId?: number }>
+
+// Get full patient data for export
+getPatientFullData(id: number): Promise<PatientFull | null>
 ```
 
 ### Consultations (`lib/consultations.ts`)
@@ -341,12 +388,62 @@ npm start
 - **Render**: Simple deployment with PostgreSQL
 - **Self-hosted**: Docker + PostgreSQL
 
+## ⭐ Funcionalidades Diferenciadoras
+
+### 1. Quick Context Panel ⭐
+**El diferenciador clave de ClinicSync**
+
+Panel lateral automático que aparece al seleccionar un paciente en "Nueva Consulta". Muestra el contexto médico completo:
+- ⚠️ Alergias destacadas con alertas visuales
+- 💊 Medicamentos actuales
+- 🩸 Tipo de sangre
+- 📅 Última consulta y días transcurridos
+- 📊 Timeline visual de consultas recientes
+- 🚨 Alertas si no hay consulta en 6+ meses
+
+**Valor único:** Contexto médico completo en segundos, sin cambiar de página. Esto no existe en ningún otro sistema del mercado.
+
+### 2. Smart Patient Search 🔍
+Búsqueda inteligente en tiempo real que encuentra pacientes por:
+- Nombre completo o parcial
+- Email
+- Teléfono de emergencia
+- Tipo de sangre
+
+Con autocompletado y preview del historial mientras escribes.
+
+### 3. Importación de Pacientes 📥
+Importa pacientes completos desde archivos médicos exportados por otros doctores:
+- Importa información completa del paciente
+- Mantiene historial completo de consultas
+- Vista previa antes de importar
+- Validación de formato de archivo
+
+**Flujo:** Otro doctor exporta → Tú importas → Paciente con historial completo disponible
+
 ## 📚 Additional Documentation
 
-- [Architecture Overview](./docs/ARCHITECTURE.md)
-- [API Reference](./docs/API.md)
-- [Database Schema](./docs/DATABASE.md)
-- [Contributing Guide](./docs/CONTRIBUTING.md)
+### Guías Principales
+- [Elevator Pitch](./PITCH.md) - Guía completa para presentar ClinicSync
+- [Changelog](./CHANGELOG.md) - Historial de cambios y funcionalidades
+- [Features Implementation](./docs/FEATURES.md) - Todas las funcionalidades implementadas
+- [Features Proposal](./FEATURES_PROPOSAL.md) - Propuesta detallada de funcionalidades diferenciadoras
+
+### Documentación Técnica
+- [Architecture Overview](./docs/ARCHITECTURE.md) - Arquitectura del sistema
+- [API Reference](./docs/API.md) - Referencia completa de Server Actions
+- [Database Schema](./docs/DATABASE.md) - Esquema y modelos de base de datos
+- [Quick Reference](./docs/QUICK_REFERENCE.md) - Referencia rápida de código
+
+### Configuración y Deployment
+- [Supabase Setup](./docs/SUPABASE_SETUP.md) - Configuración de Supabase
+- [Vercel Setup](./VERCEL_SETUP.md) - Configuración de Vercel
+- [Troubleshooting Guide](./docs/TROUBLESHOOTING.md) - Guía de solución de problemas
+- [Database Error Solutions](./docs/SOLUCION_ERROR_DB.md) - Soluciones rápidas de errores de BD
+- [Hydration Error Fix](./docs/HYDRATION_ERROR.md) - Solución de errores de hidratación
+
+### Desarrollo
+- [Contributing Guide](./docs/CONTRIBUTING.md) - Guía para contribuir
 
 ## 🤝 Contributing
 

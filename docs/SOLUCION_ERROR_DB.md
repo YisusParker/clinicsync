@@ -38,9 +38,9 @@ ConnectorError(ConnectorError {
 
 ## Solución para Problema 1: Error de Conexión General
 
-## Solución Paso a Paso
+### Solución Paso a Paso
 
-### 1. Obtén la URL de Supabase
+#### 1. Obtén la URL de Supabase
 
 1. Ve a [Supabase Dashboard](https://app.supabase.com)
 2. Selecciona tu proyecto
@@ -49,7 +49,7 @@ ConnectorError(ConnectorError {
    - **Connection pooling** → **Transaction mode**
 5. Copia la URL completa
 
-### 2. Formato Correcto
+#### 2. Formato Correcto
 
 La URL debe incluir estos parámetros al final:
 ```
@@ -61,7 +61,7 @@ La URL debe incluir estos parámetros al final:
 postgresql://postgres.xxxxx:password@aws-1-us-east-1.pooler.supabase.com:5432/postgres?pgbouncer=true&sslmode=require
 ```
 
-### 3. Configura en Vercel
+#### 3. Configura en Vercel
 
 1. Ve a [Vercel Dashboard](https://vercel.com/dashboard)
 2. Selecciona tu proyecto `clinicsync`
@@ -80,7 +80,7 @@ postgresql://postgres.xxxxx:password@aws-1-us-east-1.pooler.supabase.com:5432/po
 7. **Environment**: Selecciona **Production**, **Preview**, y **Development**
 8. Haz clic en **Save**
 
-### 4. Redeploy
+#### 4. Redeploy
 
 **IMPORTANTE**: Después de cambiar variables de entorno, debes hacer un redeploy:
 
@@ -89,7 +89,7 @@ postgresql://postgres.xxxxx:password@aws-1-us-east-1.pooler.supabase.com:5432/po
 3. Selecciona **Redeploy**
 4. Espera a que termine el deployment
 
-### 5. Verifica
+#### 5. Verifica
 
 1. Intenta registrar un nuevo doctor
 2. O intenta iniciar sesión
@@ -120,7 +120,7 @@ Si el error de "prepared statement" persiste después de verificar `DATABASE_URL
 1. **Verifica el archivo `lib/db.ts`**:
    - Debe usar el patrón singleton
    - Debe asignar al global tanto en desarrollo como en producción
-   - Ver sección 6.1 en [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) para más detalles
+   - Ver sección 6.1 en [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) para más detalles
 
 2. **Configura `DIRECT_URL` (opcional)**:
    - Útil para migraciones cuando usas connection pooling
@@ -136,7 +136,7 @@ Si el error de "prepared statement" persiste después de verificar `DATABASE_URL
 ## Documentación Completa
 
 Para más detalles, consulta:
-- [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md) - Guía completa de Supabase
-- [VERCEL_SETUP.md](VERCEL_SETUP.md) - Configuración general de Vercel
-- [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) - Más soluciones (incluye sección 6.1 sobre prepared statements)
+- [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) - Guía completa de Supabase
+- [../VERCEL_SETUP.md](../VERCEL_SETUP.md) - Configuración general de Vercel
+- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - Más soluciones (incluye sección 6.1 sobre prepared statements)
 

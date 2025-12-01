@@ -316,6 +316,120 @@ if (result?.error) {
 
 ---
 
+### `searchPatients`
+
+Searches for patients using multiple criteria.
+
+**Location**: `lib/patients.ts`
+
+**Signature**:
+```typescript
+export async function searchPatients(
+  query: string
+): Promise<Patient[]>
+```
+
+**Parameters**:
+- `query` (string): Search term (min 2 characters)
+
+**Returns**: Array of patient objects matching the search criteria. Searches in:
+- Name
+- Email
+- Emergency phone
+- Blood type
+
+**Note**: Returns empty array if query is less than 2 characters.
+
+**Example**:
+```typescript
+const results = await searchPatients("María");
+// Returns patients with "María" in name, email, or phone
+```
+
+---
+
+### `getPatientQuickContext`
+
+Gets quick context information for a patient (used in Quick Context Panel).
+
+**Location**: `lib/patients.ts`
+
+**Signature**:
+```typescript
+export async function getPatientQuickContext(
+  id: number
+): Promise<PatientContext | null>
+```
+
+**Parameters**:
+- `id` (number): Patient ID
+
+**Returns**:
+```typescript
+{
+  id: number;
+  name: string;
+  email: string | null;
+  bloodType: string | null;
+  allergies: string | null;
+  medications: string | null;
+  emergencyPhone: string | null;
+  consultations: Consultation[]; // Last 5 consultations
+  _count: { consultations: number };
+  daysSinceLastConsultation: number | null;
+} | null
+```
+
+**Example**:
+```typescript
+const context = await getPatientQuickContext(1);
+if (context) {
+  console.log(`Last consultation: ${context.daysSinceLastConsultation} days ago`);
+}
+```
+
+---
+
+### `importPatientFromFile`
+
+Imports a patient from an exported medical file.
+
+**Location**: `lib/patients.ts`
+
+**Signature**:
+```typescript
+export async function importPatientFromFile(
+  fileContent: string,
+  consultations: Array<{ date: string; summary: string }>
+): Promise<{ error?: string; patientId?: number }>
+```
+
+**Parameters**:
+- `fileContent` (string): Content of the exported medical file (.txt)
+- `consultations` (array): Array of consultations to import
+
+**Returns**:
+- `{ patientId: number }` on success
+- `{ error: string }` on failure
+
+**Example**:
+```typescript
+const fileContent = await fs.readFile("patient.txt", "utf-8");
+const result = await importPatientFromFile(fileContent, consultations);
+if (result.error) {
+  console.error(result.error);
+} else {
+  console.log(`Patient imported with ID: ${result.patientId}`);
+}
+```
+
+**Errors**:
+- `"No autorizado."` - Not authenticated
+- `"No se pudo extraer el nombre del paciente del archivo."` - Invalid file format
+- `"Error al importar el paciente. Verifica el formato del archivo."` - Import failed
+
+---
+
 ## Consultation API
 
 ### `getConsultations`
