@@ -457,17 +457,4 @@ Importa pacientes completos desde archivos médicos exportados por otros doctore
 
 This project is private and proprietary.
 
-## 👥 Authors
 
-- ClinicSync Development Team
-
-## 🙏 Acknowledgments
-
-- Next.js team for the excellent framework
-- Prisma for the powerful ORM
-- Tailwind CSS for the utility-first CSS framework
-- Lucide for the beautiful icon set
-
----
-
-**Built with ❤️ for healthcare professionals in Latin America**
