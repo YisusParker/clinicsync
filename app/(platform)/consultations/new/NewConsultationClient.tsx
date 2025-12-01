@@ -18,7 +18,7 @@ interface Patient {
   _count: {
     consultations: number;
   };
-  consultations: Array<{
+  consultations?: Array<{
     date: Date;
     summary: string;
   }>;

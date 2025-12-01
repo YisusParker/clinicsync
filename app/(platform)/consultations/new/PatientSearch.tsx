@@ -15,7 +15,7 @@ interface Patient {
   _count: {
     consultations: number;
   };
-  consultations: Array<{
+  consultations?: Array<{
     date: Date;
     summary: string;
   }>;
@@ -169,7 +169,7 @@ export default function PatientSearch({
                       </p>
                     </div>
                   )}
-                  {patient.consultations.length > 0 && (
+                  {patient.consultations && patient.consultations.length > 0 && (
                     <p className="text-xs text-slate-500 mt-1">
                       {patient._count.consultations} consultas • Última:{" "}
                       {new Date(
