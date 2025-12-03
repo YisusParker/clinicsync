@@ -1,5 +1,6 @@
 import { getConsultation } from "@/lib/consultations";
-import { ArrowLeft, Calendar, User, FileText } from "lucide-react";
+import { getCurrentDoctor } from "@/lib/auth";
+import { ArrowLeft, Calendar, User, FileText, Mail } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import DeleteConsultationButton from "./DeleteButton";
@@ -11,10 +12,14 @@ export default async function ConsultationDetailPage({
 }) {
   const { id } = await params;
   const consultation = await getConsultation(Number(id));
+  const currentDoctor = await getCurrentDoctor();
 
   if (!consultation) {
     notFound();
   }
+
+  // Check if consultation belongs to current doctor (for delete button)
+  const canDelete = consultation.doctor.id === currentDoctor?.id;
 
   return (
     <div className="space-y-6">
@@ -123,6 +128,21 @@ export default async function ConsultationDetailPage({
                   </p>
                 </div>
               </div>
+              {consultation.doctor && (
+                <div className="flex items-center gap-3">
+                  <User size={18} className="text-slate-400" />
+                  <div>
+                    <p className="text-xs text-slate-500">Médico que atendió</p>
+                    <p className="text-sm font-medium text-slate-800">
+                      {consultation.doctor.name}
+                    </p>
+                    <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                      <Mail size={12} />
+                      {consultation.doctor.email}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -135,12 +155,14 @@ export default async function ConsultationDetailPage({
             </Link>
           )}
 
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-            <h3 className="text-sm font-semibold text-slate-800 mb-4">
-              Acciones
-            </h3>
-            <DeleteConsultationButton consultationId={consultation.id} />
-          </div>
+          {canDelete && (
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+              <h3 className="text-sm font-semibold text-slate-800 mb-4">
+                Acciones
+              </h3>
+              <DeleteConsultationButton consultationId={consultation.id} />
+            </div>
+          )}
         </div>
       </div>
     </div>

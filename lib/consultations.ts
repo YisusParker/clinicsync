@@ -74,10 +74,14 @@ export async function getConsultation(id: number) {
     return null;
   }
 
+  // Find consultation and check if patient belongs to current doctor
+  // This allows viewing consultations from other doctors if the patient belongs to current doctor
   const consultation = await prisma.consultation.findFirst({
     where: {
       id,
-      doctorId: doctor.id,
+      patient: {
+        doctorId: doctor.id, // Patient must belong to current doctor
+      },
     },
     include: {
       patient: {
@@ -88,6 +92,13 @@ export async function getConsultation(id: number) {
           bloodType: true,
           allergies: true,
           medications: true,
+        },
+      },
+      doctor: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
         },
       },
     },

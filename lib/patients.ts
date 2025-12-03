@@ -191,11 +191,17 @@ export async function getPatient(id: number) {
     include: {
       consultations: {
         orderBy: { date: "desc" },
-        take: 10,
         select: {
           id: true,
           date: true,
           summary: true,
+          doctor: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
         },
       },
     },
@@ -357,6 +363,12 @@ export async function getPatientFullData(id: number) {
       consultations: {
         orderBy: { date: "asc" },
         include: {
+          doctor: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
           FollowUpPlan: {
             include: {
               CheckIn: {
@@ -389,6 +401,8 @@ export async function importPatientFromFile(
   consultations: Array<{
     date: string;
     summary: string;
+    doctorName?: string;
+    doctorEmail?: string;
   }>
 ): Promise<{ error?: string; patientId?: number }> {
   try {
@@ -479,10 +493,24 @@ export async function importPatientFromFile(
         try {
           const consultationDate = new Date(consultation.date);
           if (!isNaN(consultationDate.getTime()) && consultation.summary) {
+            // Try to find the original doctor by email, otherwise use current doctor
+            let consultationDoctorId = doctor.id;
+            
+            if (consultation.doctorEmail) {
+              const originalDoctor = await prisma.doctor.findUnique({
+                where: { email: consultation.doctorEmail },
+                select: { id: true },
+              });
+              
+              if (originalDoctor) {
+                consultationDoctorId = originalDoctor.id;
+              }
+            }
+            
             await prisma.consultation.create({
               data: {
                 patientId: patient.id,
-                doctorId: doctor.id,
+                doctorId: consultationDoctorId,
                 summary: consultation.summary,
                 date: consultationDate,
               },

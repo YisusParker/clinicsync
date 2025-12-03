@@ -15,3 +15,4 @@ export async function deleteConsultationAction(formData: FormData): Promise<void
   await deleteConsultation(id);
 }
 
+

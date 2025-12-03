@@ -10,3 +10,4 @@ planId,patientId,createdAt,symptomScore,notes
 10,10,2024-02-18T07:00:00Z,2,Mejoría con antihistamínico. Síntomas controlados.
 11,11,2024-02-20T08:00:00Z,3,Glucosa: 125 mg/dL. Paciente adaptándose a nueva dosis.
 
+

@@ -14,7 +14,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let consultations: Array<{ date: string; summary: string }> = [];
+    let consultations: Array<{ 
+      date: string; 
+      summary: string;
+      doctorName?: string;
+      doctorEmail?: string;
+    }> = [];
     try {
       if (consultationsJson) {
         consultations = JSON.parse(consultationsJson);

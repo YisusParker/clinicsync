@@ -2,6 +2,7 @@ import { getPatient } from "@/lib/patients";
 import { ArrowLeft, Edit, Mail, Phone, Droplet, Calendar, FileText, Download } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import DeletePatientButton from "./DeleteButton";
 
 export default async function PatientDetailPage({
   params,
@@ -146,13 +147,18 @@ export default async function PatientDetailPage({
                     href={`/consultations/${consultation.id}`}
                     className="block p-4 bg-slate-50 rounded-xl border border-slate-200 hover:bg-slate-100 hover:border-[#0A6CBD]/30 transition group"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-slate-800 group-hover:text-[#0A6CBD] transition">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-800 group-hover:text-[#0A6CBD] transition mb-1">
                           {consultation.summary}
                         </p>
+                        {consultation.doctor && (
+                          <p className="text-xs text-slate-500">
+                            Atendido por: {consultation.doctor.name} ({consultation.doctor.email})
+                          </p>
+                        )}
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-slate-500 ml-4">
+                      <div className="flex items-center gap-2 text-xs text-slate-500 ml-4 flex-shrink-0">
                         <Calendar size={14} />
                         <span>
                           {new Date(consultation.date).toLocaleDateString("es-ES", {
@@ -192,6 +198,14 @@ export default async function PatientDetailPage({
                 Descargar archivo completo
               </a>
             </div>
+          </div>
+          
+          {/* DELETE PATIENT */}
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <h3 className="text-sm font-semibold text-slate-800 mb-4">
+              Zona de peligro
+            </h3>
+            <DeletePatientButton patientId={patient.id} />
           </div>
         </div>
       </div>

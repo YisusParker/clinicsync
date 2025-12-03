@@ -2,9 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
-import { deleteConsultationAction } from "./actions";
+import { deletePatientAction } from "./actions";
 
-export default function DeleteConsultationButton({ consultationId }: { consultationId: number }) {
+export default function DeletePatientButton({ patientId }: { patientId: number }) {
   const [isPending, startTransition] = useTransition();
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -16,15 +16,20 @@ export default function DeleteConsultationButton({ consultationId }: { consultat
 
     startTransition(async () => {
       const formData = new FormData();
-      formData.append("id", String(consultationId));
-      await deleteConsultationAction(formData);
+      formData.append("id", String(patientId));
+      await deletePatientAction(formData);
     });
   };
 
   if (showConfirm) {
     return (
       <div className="space-y-2">
-        <p className="text-sm text-red-600 font-medium">¿Eliminar esta consulta?</p>
+        <p className="text-sm text-red-600 font-medium">
+          ¿Estás seguro de eliminar este paciente?
+        </p>
+        <p className="text-xs text-slate-500">
+          Esta acción eliminará permanentemente el paciente y todas sus consultas. Esta acción no se puede deshacer.
+        </p>
         <div className="flex gap-2">
           <button
             onClick={handleDelete}
@@ -51,9 +56,8 @@ export default function DeleteConsultationButton({ consultationId }: { consultat
       className="w-full px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-medium transition flex items-center justify-center gap-2"
     >
       <Trash2 size={16} />
-      Eliminar consulta
+      Eliminar paciente
     </button>
   );
 }
-
 

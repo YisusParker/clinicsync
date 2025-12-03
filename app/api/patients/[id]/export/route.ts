@@ -68,6 +68,9 @@ export async function GET(
           hour: "2-digit",
           minute: "2-digit",
         })}\n`;
+        if (consultation.doctor) {
+          content += `Médico que atendió: ${consultation.doctor.name} (${consultation.doctor.email})\n`;
+        }
         content += `\nResumen:\n${consultation.summary}\n`;
 
         // Follow-up plan if exists
@@ -127,4 +130,5 @@ export async function GET(
     );
   }
 }
+
 

@@ -95,17 +95,29 @@ export default function ImportPatientForm() {
       const fileContent = await file.text();
       
       // Parse consultations from file
-      const consultations: Array<{ date: string; summary: string }> = [];
+      const consultations: Array<{ 
+        date: string; 
+        summary: string;
+        doctorName?: string;
+        doctorEmail?: string;
+      }> = [];
       const lines = fileContent.split("\n");
       
       let inConsultationSection = false;
-      let currentConsultation: { date: string; summary: string } | null = null;
+      let currentConsultation: { 
+        date: string; 
+        summary: string;
+        doctorName?: string;
+        doctorEmail?: string;
+      } | null = null;
+      let inSummarySection = false;
       
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         
         if (line.includes("HISTORIAL DE CONSULTAS")) {
           inConsultationSection = true;
+          inSummarySection = false;
           continue;
         }
         
@@ -117,37 +129,92 @@ export default function ImportPatientForm() {
         }
         
         if (inConsultationSection) {
+          // Check if this is a separator line (only "=" characters, length >= 80)
+          const isLongSeparator = line.match(/^={50,}$/);
+          
           if (line.startsWith("CONSULTA #")) {
-            if (currentConsultation) {
+            if (currentConsultation && currentConsultation.date && currentConsultation.summary) {
               consultations.push(currentConsultation);
             }
             currentConsultation = { date: "", summary: "" };
+            inSummarySection = false;
           } else if (line.startsWith("Fecha:") && currentConsultation) {
             const dateStr = line.replace("Fecha:", "").trim();
-            // Parse Spanish date format
+            // Parse Spanish date format: "2 de diciembre de 2025, 19:41"
             try {
-              const date = new Date(dateStr);
+              // Try to parse with Spanish locale
+              let date = new Date(dateStr);
+              if (isNaN(date.getTime())) {
+                // Manual parsing for Spanish format: "día de mes de año, hora:minuto"
+                const months: { [key: string]: string } = {
+                  enero: "01", febrero: "02", marzo: "03", abril: "04",
+                  mayo: "05", junio: "06", julio: "07", agosto: "08",
+                  septiembre: "09", octubre: "10", noviembre: "11", diciembre: "12"
+                };
+                const match = dateStr.match(/(\d+)\s+de\s+(\w+)\s+de\s+(\d+),?\s*(\d+):(\d+)/i);
+                if (match) {
+                  const day = match[1].padStart(2, "0");
+                  const monthName = match[2].toLowerCase();
+                  const year = match[3];
+                  const hour = match[4];
+                  const minute = match[5];
+                  const month = months[monthName] || "01";
+                  const isoDate = `${year}-${month}-${day}T${hour}:${minute}:00`;
+                  date = new Date(isoDate);
+                }
+              }
               if (!isNaN(date.getTime())) {
                 currentConsultation.date = date.toISOString();
+              } else {
+                currentConsultation.date = new Date().toISOString();
               }
             } catch (err) {
               // Try alternative parsing
               currentConsultation.date = new Date().toISOString();
             }
-          } else if (line.startsWith("Resumen:") && currentConsultation) {
-            // Summary starts on next line
-            continue;
-          } else if (currentConsultation && line && !line.match(/^-+$/)) {
-            if (!currentConsultation.summary) {
-              currentConsultation.summary = line;
+            inSummarySection = false;
+          } else if (line.startsWith("Médico que atendió:") && currentConsultation) {
+            // Extract doctor info: "Médico que atendió: Name (email@example.com)"
+            const doctorInfo = line.replace("Médico que atendió:", "").trim();
+            const match = doctorInfo.match(/^(.+?)\s*\((.+?)\)$/);
+            if (match) {
+              currentConsultation.doctorName = match[1].trim();
+              currentConsultation.doctorEmail = match[2].trim();
             } else {
-              currentConsultation.summary += "\n" + line;
+              // If no email in parentheses, just use the name
+              currentConsultation.doctorName = doctorInfo;
+            }
+            inSummarySection = false;
+          } else if (line.startsWith("Resumen:") && currentConsultation) {
+            // Summary starts on next line (even if empty)
+            inSummarySection = true;
+            continue;
+          } else if (line.startsWith("Plan de seguimiento:") && currentConsultation) {
+            // Stop reading summary if we hit a follow-up plan section
+            inSummarySection = false;
+          } else if (isLongSeparator && currentConsultation) {
+            // Long separator (===) indicates end of consultation
+            // Finish current consultation if we have date and summary
+            if (currentConsultation.date && currentConsultation.summary && currentConsultation.summary.trim()) {
+              consultations.push(currentConsultation);
+              currentConsultation = null;
+            }
+            inSummarySection = false;
+          } else if (currentConsultation && !isLongSeparator && !line.match(/^-+$/)) {
+            if (inSummarySection) {
+              // We're in the summary section - collect text (even empty lines can be part of summary)
+              if (!currentConsultation.summary) {
+                currentConsultation.summary = line;
+              } else {
+                currentConsultation.summary += "\n" + line;
+              }
             }
           }
         }
       }
       
-      if (currentConsultation && currentConsultation.date) {
+      // Push last consultation if exists
+      if (currentConsultation && currentConsultation.date && currentConsultation.summary && currentConsultation.summary.trim()) {
         consultations.push(currentConsultation);
       }
 
